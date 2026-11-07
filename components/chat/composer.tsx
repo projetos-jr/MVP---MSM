@@ -98,11 +98,7 @@ export const Composer = forwardRef<ComposerHandle, ComposerProps>(function Compo
             }
           }}
           placeholder={
-            speech.listening
-              ? "Ouvindo… fale sua pergunta"
-              : speech.supported
-                ? "Digite ou fale sua pergunta…"
-                : "Digite sua pergunta…"
+speech.listening ? "Ouvindo… fale sua pergunta" : "Digite sua pergunta…"
           }
           className="max-h-[200px] min-h-10 flex-1 resize-none bg-transparent py-2 text-base leading-6 text-foreground outline-none placeholder:text-muted-foreground sm:text-[15px]"
         />
