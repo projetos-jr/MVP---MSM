@@ -50,7 +50,8 @@ export async function POST(request: Request) {
     path: "/",
     maxAge: SESSION_MAX_AGE_SECONDS,
   });
-  response.cookies.set(NAME_COOKIE, encodeURIComponent(name), {
+  // O Next codifica o valor do cookie automaticamente.
+  response.cookies.set(NAME_COOKIE, name, {
     httpOnly: false,
     sameSite: "lax",
     secure,

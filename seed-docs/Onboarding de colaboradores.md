@@ -2,9 +2,9 @@
 
 > **DOCUMENTO DE EXEMPLO (FICTÍCIO)** — criado apenas para demonstrar o Assistente MSM. Substitua pelo procedimento oficial da empresa.
 
-**Área responsável:** Recursos Humanos
-**Responsável pelo processo:** Analista de RH (ramal 230, rh@msm.exemplo)
-**Última revisão:** fevereiro de 2026
+- **Área responsável:** Recursos Humanos
+- **Responsável pelo processo:** Analista de RH (ramal 230, rh@msm.exemplo)
+- **Última revisão:** fevereiro de 2026
 
 ## Objetivo
 

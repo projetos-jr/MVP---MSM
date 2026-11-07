@@ -26,15 +26,12 @@ export async function* streamOfflineAnswer(
   docs: ContextDoc[],
 ): AsyncGenerator<string> {
   const question = messages.filter((m) => m.role === "user").at(-1)?.content ?? "";
-  const ranked = rankPassages(docs, question).filter((p) => p.score > 0);
+  // Trechos menores e exigindo boa parte das palavras da pergunta,
+  // para não mostrar algo sem relação.
+  const ranked = rankPassages(docs, question, 700).filter((p) => p.score > 0 && p.coverage >= 0.4);
 
-  // Até 2 trechos, de documentos diferentes quando possível.
-  const picked: typeof ranked = [];
-  for (const passage of ranked) {
-    if (picked.length >= 2) break;
-    if (picked.some((p) => p.docIndex === passage.docIndex) && ranked.length > 2) continue;
-    picked.push(passage);
-  }
+  // O trecho mais relevante e, se for quase tão relevante, o segundo.
+  const picked = ranked.slice(0, 2).filter((p, i) => i === 0 || p.score >= ranked[0].score * 0.6);
 
   let answer =
     "> ⚠️ **Modo de teste sem IA.** A chave do Gemini (`GEMINI_API_KEY`) ainda não foi configurada, " +

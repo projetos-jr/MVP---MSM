@@ -1,13 +1,11 @@
-import { cookies } from "next/headers";
-
 import { SourcesMarkerFilter, resolveSources } from "@/lib/answer";
-import { NAME_COOKIE, sanitizeName } from "@/lib/auth";
 import { env } from "@/lib/env";
 import { getReadableDocs } from "@/lib/knowledge";
 import { LLMError, isLLMConfigured, streamAnswer, type LLMMessage } from "@/lib/llm";
 import { streamOfflineAnswer } from "@/lib/llm-offline";
 import { buildContext } from "@/lib/prompt";
 import { selectContext } from "@/lib/retrieval";
+import { getUserName } from "@/lib/session";
 import type { ChatErrorCode, ChatStreamEvent } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -60,8 +58,7 @@ export async function POST(request: Request) {
     return Response.json({ error: FRIENDLY_ERRORS.bad_request }, { status: 400 });
   }
   const checkedAfter = typeof body.checkedAfter === "number" ? body.checkedAfter : undefined;
-  const cookieStore = await cookies();
-  const userName = sanitizeName(decodeURIComponent(cookieStore.get(NAME_COOKIE)?.value ?? ""));
+  const userName = await getUserName();
 
   const encoder = new TextEncoder();
   const signal = request.signal;

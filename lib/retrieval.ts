@@ -37,7 +37,9 @@ const STOPWORDS = new Set(
     "ele ela eles elas eu tu voce voces nos vos me te lhe meu minha meus minhas seu sua seus suas " +
     "nosso nossa ser estar ter haver foi sao sou era tem tinha ha faz fazer faco posso pode podem " +
     "deve devo preciso precisa sobre entre ate apos antes depois tambem ja nao sim so cada todo " +
-    "toda todos todas outro outra qualquer algum alguma the of and to in is"
+    "toda todos todas outro outra qualquer algum alguma quanto quanta quantos quantas leva levar " +
+    "existe existem gostaria queria saber informar explique explicar diga dizer favor ola oi bom dia " +
+    "the of and to in is"
   ).split(/\s+/),
 );
 
@@ -48,16 +50,19 @@ export function normalize(text: string): string {
     .replace(/[̀-ͯ]/g, "");
 }
 
-/** Redução simples de plural/flexão para casar "chamados" com "chamado". */
+/**
+ * Radical simples: tira o plural e corta a palavra em 5 letras, para casar
+ * "chamados" com "chamado", "comprar" com "compras" e "urgência" com
+ * "urgente". Grosseiro, mas suficiente para uma pré-seleção.
+ */
 function stem(token: string): string {
-  if (token.length <= 3) return token;
-  if (token.endsWith("oes") || token.endsWith("aes")) return token.slice(0, -3) + "ao";
-  if (token.endsWith("ais")) return token.slice(0, -3) + "al";
-  if (token.endsWith("eis") && token.length > 4) return token.slice(0, -3) + "el";
-  if (token.endsWith("ns")) return token.slice(0, -2) + "m";
-  if (token.endsWith("res") && token.length > 5) return token.slice(0, -2);
-  if (token.endsWith("s") && !token.endsWith("ss")) return token.slice(0, -1);
-  return token;
+  if (token.length <= 3 || /^\d+$/.test(token)) return token;
+  let t = token;
+  if (t.endsWith("oes") || t.endsWith("aes")) t = t.slice(0, -3) + "ao";
+  else if (t.endsWith("ais")) t = t.slice(0, -3) + "al";
+  else if (t.endsWith("ns")) t = t.slice(0, -2) + "m";
+  else if (t.endsWith("s") && !t.endsWith("ss")) t = t.slice(0, -1);
+  return t.slice(0, 5);
 }
 
 export function tokenize(text: string): string[] {
@@ -67,28 +72,50 @@ export function tokenize(text: string): string[] {
     .map(stem);
 }
 
-/** Divide o texto em trechos de ~targetChars respeitando parágrafos. */
+/**
+ * Divide o texto em trechos de ~targetChars respeitando parágrafos e
+ * começando um trecho novo nos títulos (Markdown), quando possível.
+ */
 export function splitIntoPassages(text: string, targetChars = 1500): string[] {
-  const paragraphs = text.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean);
-  const passages: string[] = [];
-  let current = "";
-  for (const paragraph of paragraphs) {
-    if (paragraph.length > targetChars * 1.5) {
-      if (current) {
-        passages.push(current);
-        current = "";
-      }
-      for (let i = 0; i < paragraph.length; i += targetChars) {
-        passages.push(paragraph.slice(i, i + targetChars));
-      }
+  const units: string[] = [];
+  const blocks = text
+    .split(/\n{2,}|\n(?=#{1,6}\s)/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+  // Blocos muito grandes (listas, tabelas) são quebrados por linha.
+  for (const block of blocks) {
+    if (block.length <= targetChars * 1.5) {
+      units.push(block);
       continue;
     }
-    if (current && current.length + paragraph.length + 2 > targetChars) {
-      passages.push(current);
-      current = paragraph;
-    } else {
-      current = current ? `${current}\n\n${paragraph}` : paragraph;
+    let buffer = "";
+    for (const line of block.split("\n")) {
+      if (line.length > targetChars) {
+        if (buffer) units.push(buffer);
+        buffer = "";
+        for (let i = 0; i < line.length; i += targetChars) units.push(line.slice(i, i + targetChars));
+      } else if (buffer && buffer.length + line.length + 1 > targetChars) {
+        units.push(buffer);
+        buffer = line;
+      } else {
+        buffer = buffer ? `${buffer}\n${line}` : line;
+      }
     }
+    if (buffer) units.push(buffer);
+  }
+
+  const passages: string[] = [];
+  let current = "";
+  for (const unit of units) {
+    const isHeading = /^#{1,6}\s/.test(unit);
+    // Um título nunca fica sozinho: o conteúdo seguinte vai junto.
+    const currentIsSmall = current.length < targetChars * 0.25;
+    const overflow = current.length + unit.length + 2 > targetChars;
+    if (current && !currentIsSmall && (overflow || (isHeading && current.length > targetChars * 0.4))) {
+      passages.push(current);
+      current = "";
+    }
+    current = current ? `${current}\n\n${unit}` : unit;
   }
   if (current) passages.push(current);
   return passages;
@@ -118,20 +145,23 @@ export class Bm25Index {
     this.avgLength = this.lengths.length ? total / this.lengths.length : 0;
   }
 
-  score(query: string): number[] {
+  /** Pontuação BM25 e fração dos termos da consulta presentes em cada texto. */
+  score(query: string): Array<{ score: number; coverage: number }> {
     const terms = [...new Set(tokenize(query))];
     const n = this.docTokens.length;
     return this.docTokens.map((tf, i) => {
       let score = 0;
+      let matched = 0;
       for (const term of terms) {
         const freq = tf.get(term);
         if (!freq) continue;
+        matched++;
         const df = this.docFreq.get(term) ?? 0;
         const idf = Math.log(1 + (n - df + 0.5) / (df + 0.5));
         const norm = this.k1 * (1 - this.b + this.b * (this.lengths[i] / (this.avgLength || 1)));
         score += idf * ((freq * (this.k1 + 1)) / (freq + norm));
       }
-      return score;
+      return { score, coverage: terms.length ? matched / terms.length : 0 };
     });
   }
 }
@@ -140,20 +170,21 @@ export class Bm25Index {
 export function rankPassages(
   docs: RetrievableDoc[],
   query: string,
-): Array<Passage & { score: number }> {
+  passageChars = 1500,
+): Array<Passage & { score: number; coverage: number }> {
   const passages: Passage[] = [];
   docs.forEach((doc, docIndex) => {
-    splitIntoPassages(doc.text).forEach((text, index) => {
+    splitIntoPassages(doc.text, passageChars).forEach((text, index) => {
       passages.push({ docIndex, index, text });
     });
   });
   // O nome do documento entra no índice de cada trecho (ajuda bastante).
   const index = new Bm25Index(
-    passages.map((p) => `${docs[p.docIndex].name}\n${docs[p.docIndex].name}\n${p.text}`),
+    passages.map((p) => `${docs[p.docIndex].name}\n${p.text}`),
   );
   const scores = index.score(query);
   return passages
-    .map((p, i) => ({ ...p, score: scores[i] }))
+    .map((p, i) => ({ ...p, ...scores[i] }))
     .sort((a, b) => b.score - a.score || a.docIndex - b.docIndex || a.index - b.index);
 }
 

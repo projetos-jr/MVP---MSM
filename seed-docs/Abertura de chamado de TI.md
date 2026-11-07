@@ -2,9 +2,9 @@
 
 > **DOCUMENTO DE EXEMPLO (FICTÍCIO)** — criado apenas para demonstrar o Assistente MSM. Substitua pelo procedimento oficial da empresa.
 
-**Área responsável:** Tecnologia da Informação (TI)
-**Responsável pelo processo:** Coordenação de TI (ramal 250, ti@msm.exemplo)
-**Última revisão:** abril de 2026
+- **Área responsável:** Tecnologia da Informação (TI)
+- **Responsável pelo processo:** Coordenação de TI (ramal 250, ti@msm.exemplo)
+- **Última revisão:** abril de 2026
 
 ## Quando abrir um chamado
 

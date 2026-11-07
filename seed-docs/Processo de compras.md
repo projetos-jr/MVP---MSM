@@ -2,9 +2,9 @@
 
 > **DOCUMENTO DE EXEMPLO (FICTÍCIO)** — criado apenas para demonstrar o Assistente MSM. Substitua pelo procedimento oficial da empresa.
 
-**Área responsável:** Suprimentos
-**Responsável pelo processo:** Coordenação de Suprimentos (ramal 210, compras@msm.exemplo)
-**Última revisão:** março de 2026
+- **Área responsável:** Suprimentos
+- **Responsável pelo processo:** Coordenação de Suprimentos (ramal 210, compras@msm.exemplo)
+- **Última revisão:** março de 2026
 
 ## Objetivo
 

@@ -40,9 +40,19 @@ let clientKey = "";
 
 function getClient(): GoogleGenAI {
   const apiKey = env.geminiApiKey;
-  if (!client || clientKey !== apiKey) {
-    client = new GoogleGenAI({ apiKey });
-    clientKey = apiKey;
+  const baseUrl = env.geminiBaseUrl;
+  if (!client || clientKey !== `${apiKey}|${baseUrl}`) {
+    client = new GoogleGenAI({
+      apiKey,
+      httpOptions: {
+        ...(baseUrl ? { baseUrl } : {}),
+        // Repete uma vez em caso de instabilidade momentânea (servidor
+        // sobrecarregado). Limite de uso (429) não é repetido: vai direto
+        // para o modelo reserva.
+        retryOptions: { attempts: 2, initialDelay: 0.8, httpStatusCodes: [500, 502, 503, 504] },
+      },
+    });
+    clientKey = `${apiKey}|${baseUrl}`;
   }
   return client;
 }
@@ -126,7 +136,7 @@ export async function* streamAnswer(
         });
       } catch (error) {
         // Modelo sem suporte ao nível de raciocínio: tenta sem a opção.
-        if (thinking && error instanceof ApiError && error.status === 400) {
+        if (thinking && error instanceof ApiError && error.status === 400 && /thinking/i.test(error.message)) {
           thinking = undefined;
           stream = await ai.models.generateContentStream({
             model,

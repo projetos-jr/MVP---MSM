@@ -58,6 +58,10 @@ export const env = {
   get geminiThinkingLevel() {
     return (str("GEMINI_THINKING_LEVEL") || "low").toLowerCase();
   },
+  /** (Avançado) Endereço alternativo da API do Gemini, ex.: um proxy. */
+  get geminiBaseUrl() {
+    return str("GEMINI_BASE_URL");
+  },
   get driveFolderId() {
     return parseDriveFolderId(str("DRIVE_FOLDER_ID"));
   },
