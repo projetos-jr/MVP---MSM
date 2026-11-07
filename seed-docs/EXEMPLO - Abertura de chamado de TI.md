@@ -1,4 +1,4 @@
-# Abertura de chamado de TI
+# [EXEMPLO FICTÍCIO] Abertura de chamado de TI
 
 > **DOCUMENTO DE EXEMPLO (FICTÍCIO)** — criado apenas para demonstrar o Assistente MSM. Substitua pelo procedimento oficial da empresa.
 

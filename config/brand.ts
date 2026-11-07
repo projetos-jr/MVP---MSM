@@ -67,10 +67,10 @@ export const brand = {
    * documentos da base de conhecimento (ver seed-docs/).
    */
   suggestions: [
+    "Quais serviços a MSM oferece?",
+    "Em quais setores a MSM atua?",
     "Como faço para abrir um chamado de TI?",
-    "Quais são as etapas do processo de compras?",
-    "O que acontece na primeira semana de um novo colaborador?",
-    "Quanto tempo o TI leva para atender um chamado urgente?",
+    "O que fazer quando uma máquina apresenta defeito?",
   ],
 } as const;
 

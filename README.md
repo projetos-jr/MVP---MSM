@@ -263,11 +263,17 @@ Dica: teste o roteiro uma vez antes da reunião para “aquecer” o cache e con
 
 ### Documentos de exemplo
 
-A pasta `seed-docs/` traz três documentos **fictícios**, marcados como exemplo: *Processo de compras*,
-*Onboarding de colaboradores* e *Abertura de chamado de TI*. As sugestões de perguntas da tela inicial
-foram escritas para eles. Ao trocar pelos documentos reais da MSM (institucional, serviços, setores,
-cases, contato), atualize `suggestions` em `config/brand.ts` — por exemplo: “Quais serviços a MSM
-oferece?” e “Em quais setores a MSM atua?”.
+A pasta `seed-docs/` traz dois grupos de documentos:
+
+- **Informações reais da MSM**, resumidas do site oficial (msmltda.com.br) e conferidas com ele:
+  *MSM Caldeiraria - Informações institucionais*, *Serviços da MSM*, *Setores de atuação, clientes e
+  cases*, *Política de Qualidade da MSM* e *Contatos e canais da MSM*.
+- **Processos fictícios**, com nome começando por `EXEMPLO -`, criados só para demonstrar o assistente
+  (compras, integração de novo colaborador, máquina com defeito e chamado de TI). Eles serão
+  substituídos pelos processos mapeados no projeto.
+
+As sugestões de perguntas da tela inicial (`suggestions` em `config/brand.ts`) foram escritas para esses
+documentos. Ao trocar os documentos, atualize as sugestões.
 
 ## Solução de problemas
 

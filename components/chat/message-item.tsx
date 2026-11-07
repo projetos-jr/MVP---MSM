@@ -19,6 +19,7 @@ import { Markdown } from "@/components/markdown";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import type { Feedback, StoredMessage } from "@/lib/chat-storage";
+import { displayName } from "@/lib/file-types";
 import { cn } from "@/lib/utils";
 
 export function AssistantAvatar({ className }: { className?: string }) {
@@ -175,7 +176,7 @@ export const AssistantMessage = memo(function AssistantMessage({
                       title={`Abrir "${source.name}"`}
                     >
                       <FileText className="size-3.5 shrink-0 text-brand" />
-                      <span className="truncate">{source.name}</span>
+                      <span className="truncate">{displayName(source.name)}</span>
                       <ExternalLink className="size-3 shrink-0 opacity-60 group-hover:opacity-100" />
                     </a>
                   </li>
