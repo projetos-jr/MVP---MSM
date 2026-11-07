@@ -80,10 +80,26 @@ Siga os passos abaixo para ligar a IA e o Google Drive.
 4. Copie a chave e coloque em `GEMINI_API_KEY`.
 
 Não é preciso cadastrar cartão: sem faturamento ativado, o projeto fica no **plano gratuito**. O modelo
-padrão é o `gemini-3.8-flash` (Flash mais recente do plano gratuito), com `gemini-3.5-flash-lite` como
-reserva quando o limite do principal acaba. Os dois podem ser trocados por `GEMINI_MODEL` e
-`GEMINI_FALLBACK_MODEL` (veja os modelos e limites em <https://ai.google.dev/gemini-api/docs/models> e no
-painel de limites do AI Studio).
+principal padrão é o `gemini-3.5-flash-lite`, com o `gemini-3.8-flash` (Flash mais recente) como reserva.
+O Flash-Lite vem primeiro porque, no plano gratuito, tem a maior cota e responde mais rápido. Os dois
+podem ser trocados por `GEMINI_MODEL` e `GEMINI_FALLBACK_MODEL`.
+
+### Limites do plano gratuito
+
+Os limites valem **por projeto** (não por chave) e aparecem em <https://aistudio.google.com/rate-limit>.
+No projeto do MVP, em novembro de 2026, eram:
+
+| Modelo | Perguntas por minuto | Perguntas por dia | Tokens de entrada por minuto |
+| --- | --- | --- | --- |
+| `gemini-3.5-flash-lite` (principal) | 15 | 500 | 250 mil |
+| `gemini-3.8-flash` (reserva) | 5 | 20 | 250 mil |
+
+- O limite diário **zera à meia-noite do horário do Pacífico** (5h em Brasília).
+- Quando o principal bate no limite, o app usa o reserva automaticamente; se os dois estiverem no
+  limite, mostra uma mensagem pedindo para aguardar cerca de 1 minuto.
+- Cada pergunta envia os documentos como contexto. Com documentos grandes, o limite de tokens por
+  minuto passa a pesar; ajuste `MAX_CONTEXT_CHARS` se necessário.
+- Cada acesso a `/api/diagnostico` gasta 1 pergunta de cada modelo.
 
 > **Atenção (privacidade):** no plano gratuito, os termos do Gemini API permitem que o Google use as
 > perguntas, os documentos enviados como contexto e as respostas para melhorar os produtos dele,
@@ -134,8 +150,8 @@ Copie `.env.example` para `.env.local` e preencha. Todas estão documentadas no 
 | `APP_PASSWORD` | Sim, em produção | Senha única de acesso. Em `npm run dev`, se vazia, entra sem senha. |
 | `SESSION_SECRET` | Não | Segredo do cookie de sessão. Se vazio, deriva da senha. |
 | `GEMINI_API_KEY` | Sim, para a IA | Chave do Google AI Studio. Sem ela, o chat fica no modo de teste sem IA. |
-| `GEMINI_MODEL` | Não | Modelo principal. Padrão: `gemini-3.8-flash`. |
-| `GEMINI_FALLBACK_MODEL` | Não | Modelo reserva em caso de limite (429). Padrão: `gemini-3.5-flash-lite`. `none` desativa. |
+| `GEMINI_MODEL` | Não | Modelo principal. Padrão: `gemini-3.5-flash-lite` (maior cota gratuita). |
+| `GEMINI_FALLBACK_MODEL` | Não | Modelo reserva em caso de limite (429) ou demora. Padrão: `gemini-3.8-flash`. `none` desativa. |
 | `GEMINI_THINKING_LEVEL` | Não | Raciocínio dos modelos Gemini 3+: `low` (padrão), `medium`, `high` ou `default`. |
 | `GEMINI_FIRST_TOKEN_SECONDS` | Não | Prazo para o modelo começar a responder antes de tentar o reserva. Padrão: `15`. |
 | `DRIVE_FOLDER_ID` | Sim, para o Drive | ID ou link da pasta. **Vazio = modo de teste lendo `seed-docs/`.** |

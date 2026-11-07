@@ -45,14 +45,20 @@ export const env = {
   get geminiApiKey() {
     return str("GEMINI_API_KEY");
   },
+  /**
+   * Modelo principal. Padrão: Flash-Lite, que no plano gratuito tem a maior
+   * cota (ex.: 15/min e 500/dia, contra 5/min e 20/dia do 3.8 Flash) e
+   * responde mais rápido. Os limites do seu projeto aparecem em
+   * https://aistudio.google.com/rate-limit
+   */
   get geminiModel() {
-    return str("GEMINI_MODEL") || "gemini-3.8-flash";
+    return str("GEMINI_MODEL") || "gemini-3.5-flash-lite";
   },
   /** Modelo usado se o principal estiver no limite (429) ou indisponível. "none" desativa. */
   get geminiFallbackModel() {
     const value = str("GEMINI_FALLBACK_MODEL");
     if (value.toLowerCase() === "none") return "";
-    return value || "gemini-3.5-flash-lite";
+    return value || "gemini-3.8-flash";
   },
   /** Nível de raciocínio dos modelos Gemini 3+: minimal, low, medium, high ou "default". */
   get geminiThinkingLevel() {
