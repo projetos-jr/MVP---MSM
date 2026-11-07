@@ -49,7 +49,12 @@ export function ChatApp({ userName }: { userName: string }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const stickToBottomRef = useRef(true);
   const composerRef = useRef<ComposerHandle>(null);
-  const speech = useSpeechSynthesis();
+  const {
+    supported: canSpeak,
+    speakingId,
+    speak: speakText,
+    stop: stopSpeaking,
+  } = useSpeechSynthesis();
 
   useEffect(() => {
     conversationsRef.current = conversations;
@@ -95,7 +100,10 @@ export function ChatApp({ userName }: { userName: string }) {
   // Rola para o fim quando chega conteúdo novo (se o usuário estiver no fim).
   useEffect(() => {
     const el = scrollRef.current;
-    if (el && stickToBottomRef.current) el.scrollTop = el.scrollHeight;
+    if (!el) return;
+    // Tela vazia (sugestões): sempre do topo, para mostrar a saudação.
+    if (messages.length === 0) el.scrollTop = 0;
+    else if (stickToBottomRef.current) el.scrollTop = el.scrollHeight;
   }, [lastMessage?.content, lastMessage?.sources, lastMessage?.error, messages.length, activeId]);
 
   const handleScroll = () => {
@@ -160,11 +168,15 @@ export function ChatApp({ userName }: { userName: string }) {
       );
     const fail = (code: ChatErrorCode, message: string) => patch({ error: { code, message } });
 
+    // Histórico enviado: ignora perguntas cuja resposta falhou.
+    const turns = history.filter((m, i) => {
+      if (m.error || !m.content.trim()) return false;
+      const next = history[i + 1];
+      return !(m.role === "user" && next?.role === "assistant" && next.error && !next.content.trim());
+    });
     const payload = {
       messages: [
-        ...history
-          .filter((m) => !m.error && m.content.trim())
-          .map((m) => ({ role: m.role, content: m.content })),
+        ...turns.map((m) => ({ role: m.role, content: m.content })),
         { role: "user", content: text },
       ],
       checkedAfter: getKbCheckedAfter(),
@@ -311,27 +323,27 @@ export function ChatApp({ userName }: { userName: string }) {
   }, []);
 
   const speak = useCallback(
-    (id: string, text: string) => speech.speak(id, markdownToPlainText(text)),
-    [speech],
+    (id: string, text: string) => speakText(id, markdownToPlainText(text)),
+    [speakText],
   );
 
   const newConversation = useCallback(() => {
     if (abortRef.current) abortRef.current.abort();
-    speech.stop();
+    stopSpeaking();
     setActiveId(null);
     setSidebarOpen(false);
     setTimeout(() => composerRef.current?.focus(), 50);
-  }, [speech]);
+  }, [stopSpeaking]);
 
   const selectConversation = useCallback(
     (id: string) => {
       if (abortRef.current) abortRef.current.abort();
-      speech.stop();
+      stopSpeaking();
       setActiveId(id);
       setSidebarOpen(false);
       stickToBottomRef.current = true;
     },
-    [speech],
+    [stopSpeaking],
   );
 
   const deleteConversation = useCallback(
@@ -400,12 +412,12 @@ export function ChatApp({ userName }: { userName: string }) {
                     key={message.id}
                     message={message}
                     streaming={message.id === streamingId}
-                    speaking={speech.speakingId === message.id}
-                    canSpeak={speech.supported}
+                    speaking={speakingId === message.id}
+                    canSpeak={canSpeak}
                     onFeedback={giveFeedback}
                     onRetry={retry}
                     onSpeak={speak}
-                    onStopSpeaking={speech.stop}
+                    onStopSpeaking={stopSpeaking}
                   />
                 ),
               )}

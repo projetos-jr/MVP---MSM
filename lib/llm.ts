@@ -94,11 +94,19 @@ function thinkingConfigFor(model: string) {
   return { thinkingLevel: level };
 }
 
+/** Converte para o formato do Gemini, juntando turnos seguidos do mesmo papel. */
 function toContents(messages: LLMMessage[]): Content[] {
-  return messages.map((m) => ({
-    role: m.role === "assistant" ? "model" : "user",
-    parts: [{ text: m.content }],
-  }));
+  const contents: Content[] = [];
+  for (const m of messages) {
+    const role = m.role === "assistant" ? "model" : "user";
+    const last = contents.at(-1);
+    if (last && last.role === role) {
+      last.parts = [{ text: `${last.parts?.[0]?.text ?? ""}\n\n${m.content}` }];
+    } else {
+      contents.push({ role, parts: [{ text: m.content }] });
+    }
+  }
+  return contents;
 }
 
 /**

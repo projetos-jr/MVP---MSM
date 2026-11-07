@@ -69,6 +69,24 @@ interface CitableDoc {
   url: string;
 }
 
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/**
+ * O documento foi citado pelo nome? Exige forma de citação (itálico,
+ * negrito, aspas ou "documento X") para evitar falsos positivos com nomes
+ * comuns como "Contato" ou "Serviços".
+ */
+function isCitedByName(normalizedAnswer: string, title: string, loose: boolean): boolean {
+  if (title.length < 4) return false;
+  if (loose && title.length >= 12 && normalizedAnswer.includes(title)) return true;
+  const pattern = new RegExp(
+    `(?:[*_"\u201c'\u2018]\\s*|documento\\s+(?:[*_"\u201c']\\s*)?)${escapeRegExp(title)}`,
+  );
+  return pattern.test(normalizedAnswer);
+}
+
 /**
  * Define as fontes exibidas: documentos indicados no marcador + documentos
  * citados pelo nome no texto da resposta.
@@ -83,9 +101,11 @@ export function resolveSources(
     if (n >= 1 && n <= docs.length) chosen.add(n - 1);
   }
   const normalizedAnswer = normalize(answer);
+  // Sem marcador (modelo esqueceu), a busca pelo nome é mais tolerante.
+  const loose = citedNumbers === null;
   docs.forEach((doc, index) => {
     const title = normalize(displayName(doc.name)).trim();
-    if (title.length >= 4 && normalizedAnswer.includes(title)) chosen.add(index);
+    if (isCitedByName(normalizedAnswer, title, loose)) chosen.add(index);
   });
   return [...chosen]
     .sort((a, b) => a - b)

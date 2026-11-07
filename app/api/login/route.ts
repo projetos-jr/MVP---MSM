@@ -52,7 +52,7 @@ export async function POST(request: Request) {
   });
   // O Next codifica o valor do cookie automaticamente.
   response.cookies.set(NAME_COOKIE, name, {
-    httpOnly: false,
+    httpOnly: true,
     sameSite: "lax",
     secure,
     path: "/",

@@ -14,8 +14,8 @@ export function EmptyState({
 }) {
   const name = firstName(userName);
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-col items-center px-4 pt-8 pb-6 text-center sm:pt-16">
-      <div className="mb-5 flex size-14 items-center justify-center rounded-lg bg-navy shadow-md">
+    <div className="mx-auto flex w-full max-w-3xl flex-col items-center px-4 pt-6 pb-6 text-center sm:pt-16">
+      <div className="mb-4 flex size-12 items-center justify-center rounded-lg bg-navy shadow-md sm:mb-5 sm:size-14">
         <span className="font-heading text-base font-extrabold tracking-wide text-white">MSM</span>
       </div>
       <h1 className="text-2xl font-bold sm:text-3xl">
@@ -27,7 +27,7 @@ export function EmptyState({
         oficiais e sempre indico a fonte.
       </p>
 
-      <div className="mt-8 w-full sm:mt-10">
+      <div className="mt-6 w-full sm:mt-10">
         <p className="section-title mb-3 text-left">Sugestões de perguntas</p>
         <div className="grid gap-2.5 sm:grid-cols-2">
           {brand.suggestions.map((question) => (

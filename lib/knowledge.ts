@@ -175,12 +175,12 @@ async function refresh(state: KnowledgeState): Promise<void> {
   state.entries = nextEntries;
   state.docs = [...nextEntries.values()]
     .map((entry) => entry.doc)
-    .sort((a, b) =>
-      (a.folder + "/" + a.name).localeCompare(b.folder + "/" + b.name, "pt-BR", {
-        sensitivity: "base",
-        numeric: true,
-      }),
-    );
+    .sort((a, b) => {
+      // Arquivos da pasta raiz primeiro, depois as subpastas.
+      if (!a.folder !== !b.folder) return a.folder ? 1 : -1;
+      const opts = { sensitivity: "base", numeric: true } as const;
+      return a.folder.localeCompare(b.folder, "pt-BR", opts) || a.name.localeCompare(b.name, "pt-BR", opts);
+    });
   state.error = null;
   state.lastCheckedAt = Date.now();
 }

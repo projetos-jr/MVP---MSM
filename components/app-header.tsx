@@ -1,11 +1,21 @@
 "use client";
 
-import { FolderOpen, LogOut, MessageSquareText } from "lucide-react";
+import { FolderOpen, History, LogOut, MessageSquareText } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { BrandStripe, Logo } from "@/components/brand/logo";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -16,6 +26,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { brand } from "@/config/brand";
+import { clearConversations } from "@/lib/chat-storage";
 import { firstName, initials } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -28,6 +39,7 @@ export function AppHeader({ userName }: { userName: string }) {
   const pathname = usePathname();
   const router = useRouter();
   const [leaving, setLeaving] = useState(false);
+  const [confirmClear, setConfirmClear] = useState(false);
 
   async function logout() {
     setLeaving(true);
@@ -59,6 +71,7 @@ export function AppHeader({ userName }: { userName: string }) {
                 key={href}
                 href={href}
                 aria-current={active ? "page" : undefined}
+                aria-label={label}
                 className={cn(
                   "relative flex h-9 items-center gap-2 rounded-md px-2.5 text-sm font-semibold transition-colors sm:px-3",
                   active ? "text-brand" : "text-navy/80 hover:bg-muted hover:text-navy",
@@ -95,12 +108,40 @@ export function AppHeader({ userName }: { userName: string }) {
               <span className="block truncate font-semibold text-navy">{userName || "Colaborador"}</span>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuItem onSelect={() => setConfirmClear(true)}>
+              <History />
+              Apagar histórico de conversas
+            </DropdownMenuItem>
             <DropdownMenuItem onSelect={logout} disabled={leaving}>
               <LogOut />
               Sair
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+
+        <AlertDialog open={confirmClear} onOpenChange={setConfirmClear}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Apagar histórico de conversas?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Todas as conversas salvas neste navegador serão apagadas. Recomendado em aparelhos
+                compartilhados. Essa ação não pode ser desfeita.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction
+                className="bg-destructive text-white hover:bg-destructive/90"
+                onClick={() => {
+                  clearConversations();
+                  window.location.assign("/");
+                }}
+              >
+                Apagar histórico
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </header>
   );

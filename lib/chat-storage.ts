@@ -53,9 +53,19 @@ export function loadConversations(): Conversation[] {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed)
-      ? parsed.filter(isConversation).sort((a, b) => b.updatedAt - a.updatedAt)
-      : [];
+    if (!Array.isArray(parsed)) return [];
+    return parsed
+      .filter(isConversation)
+      .map((c) => ({
+        ...c,
+        // Resposta que ficou pela metade (página fechada durante o streaming).
+        messages: c.messages.map((m) =>
+          m.role === "assistant" && !m.content.trim() && !m.error
+            ? { ...m, error: { code: "unknown" as const, message: "A resposta não foi concluída." } }
+            : m,
+        ),
+      }))
+      .sort((a, b) => b.updatedAt - a.updatedAt);
   } catch {
     return [];
   }
@@ -76,6 +86,15 @@ export function saveConversations(conversations: Conversation[]): void {
       list = list.slice(0, Math.floor(list.length / 2));
     }
   }
+  try {
+    window.localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    // ignora
+  }
+}
+
+/** Apaga todas as conversas salvas neste navegador. */
+export function clearConversations(): void {
   try {
     window.localStorage.removeItem(STORAGE_KEY);
   } catch {
