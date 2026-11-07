@@ -1,5 +1,5 @@
-import { BookOpenCheck, FileSearch, Mic } from "lucide-react";
 import type { Metadata } from "next";
+import { preload } from "react-dom";
 
 import { BrandStripe, Logo } from "@/components/brand/logo";
 import { LoginForm } from "@/components/login-form";
@@ -9,12 +9,6 @@ import { accessMisconfigured, passwordRequired } from "@/lib/auth";
 export const metadata: Metadata = { title: "Entrar" };
 export const dynamic = "force-dynamic";
 
-const HIGHLIGHTS = [
-  { icon: FileSearch, title: "Respostas com fonte", text: "Cada resposta indica o documento de onde veio." },
-  { icon: Mic, title: "Por texto ou voz", text: "Digite ou fale a pergunta, até pelo celular." },
-  { icon: BookOpenCheck, title: "Sempre atualizado", text: "Arquivo novo na pasta do Drive já entra na base." },
-];
-
 function safeRedirect(value: string | string[] | undefined): string {
   const target = Array.isArray(value) ? value[0] : value;
   return target && target.startsWith("/") && !target.startsWith("//") && !target.includes("\\")
@@ -22,91 +16,63 @@ function safeRedirect(value: string | string[] | undefined): string {
     : "/";
 }
 
+/**
+ * Tela de entrada no estilo do site da MSM: foto de uma peça fabricada pela
+ * empresa ao fundo, com sobreposição em degradê azul, e o logo e o formulário
+ * no centro. A foto é definida em config/brand.ts (loginBackground).
+ */
 export default async function LoginPage({
   searchParams,
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const params = await searchParams;
+  preload(brand.loginBackground, { as: "image", fetchPriority: "high" });
+
   return (
-    <div className="flex min-h-dvh flex-col">
-      <BrandStripe />
-      <div className="grid flex-1 lg:grid-cols-[1.05fr_1fr]">
-        {/* Painel institucional (desktop) */}
-        <aside className="relative hidden overflow-hidden bg-navy text-white lg:flex lg:flex-col lg:justify-between lg:p-12 xl:p-16">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 opacity-[0.07]"
-            style={{
-              backgroundImage:
-                "repeating-linear-gradient(135deg, #fff 0 2px, transparent 2px 28px)",
-            }}
-          />
-          <div aria-hidden className="absolute -right-24 -bottom-24 size-96 rounded-full border-[40px] border-brand/25" />
+    <div className="relative min-h-dvh bg-navy-deep">
+      {/* Fundo: foto + degradê azul (fica fixo ao rolar no celular) */}
+      <div aria-hidden className="fixed inset-0 overflow-hidden">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={brand.loginBackground}
+          alt=""
+          className="h-full w-full scale-105 object-cover object-[center_40%]"
+          fetchPriority="high"
+        />
+        <div className="absolute inset-0 bg-navy opacity-50 mix-blend-multiply sm:opacity-60" />
+        <div className="absolute inset-0 bg-[linear-gradient(160deg,rgba(4,30,66,0.78)_0%,rgba(30,42,94,0.4)_48%,rgba(4,30,66,0.8)_100%)] sm:bg-[linear-gradient(160deg,rgba(4,30,66,0.92)_0%,rgba(30,42,94,0.5)_48%,rgba(4,30,66,0.9)_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(4,30,66,0.35)_100%)] sm:bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(4,30,66,0.55)_100%)]" />
+      </div>
 
-          <div className="relative">
-            <p className="font-heading text-4xl font-extrabold tracking-wider">MSM</p>
-            <p className="font-heading text-[11px] font-semibold tracking-[0.3em] text-white/70">
-              INDUSTRIAL ENGINEERING
-            </p>
-          </div>
+      <BrandStripe className="fixed inset-x-0 top-0 z-20" />
 
-          <div className="relative max-w-lg">
-            <p className="font-heading text-xs font-bold tracking-[0.2em] text-brand uppercase">
-              {brand.productName}
-            </p>
-            <h2 className="mt-3 font-heading text-3xl leading-tight font-bold text-white xl:text-4xl">
-              Tire dúvidas sobre a MSM em segundos.
-            </h2>
-            <p className="mt-4 text-[15px] leading-relaxed text-white/75">
-              Processos, serviços, funções e procedimentos da empresa, respondidos com base nos
-              documentos oficiais.
-            </p>
-            <ul className="mt-10 space-y-5">
-              {HIGHLIGHTS.map(({ icon: Icon, title, text }) => (
-                <li key={title} className="flex gap-4">
-                  <span className="flex size-10 shrink-0 items-center justify-center rounded-md bg-white/10">
-                    <Icon className="size-5 text-brand" />
-                  </span>
-                  <span>
-                    <span className="block font-heading text-sm font-bold">{title}</span>
-                    <span className="block text-sm text-white/70">{text}</span>
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <p className="relative text-xs text-white/50">
-            {brand.companyName} · {brand.companyLocation}
-          </p>
-        </aside>
-
-        {/* Formulário */}
-        <main className="flex items-center justify-center px-4 py-10 sm:px-8">
-          <div className="w-full max-w-sm">
-            <div className="mb-8 flex flex-col items-center text-center lg:items-start lg:text-left">
-              <Logo className="h-12" />
-              <h1 className="mt-6 font-heading text-xl font-bold tracking-wide uppercase">
+      <main className="relative z-10 flex min-h-dvh items-center justify-center px-5 pt-[max(3rem,env(safe-area-inset-top))] pb-[max(2.5rem,env(safe-area-inset-bottom))] sm:px-4">
+        <div className="w-full max-w-[400px] animate-in fade-in-0 slide-in-from-bottom-2 duration-500 sm:max-w-[420px]">
+          <div className="rounded-xl bg-white px-5 pt-6 pb-6 shadow-[0_24px_64px_rgba(4,30,66,0.45)] sm:px-9 sm:pt-10 sm:pb-9">
+            <div className="flex flex-col items-center text-center">
+              <Logo className="h-14 sm:h-[88px]" priority />
+              <span aria-hidden className="mt-4 h-[3px] w-10 rounded-full bg-brand sm:mt-6" />
+              <h1 className="mt-3 font-heading text-[15px] font-bold tracking-[0.14em] uppercase sm:mt-4 sm:text-lg">
                 {brand.productName}
               </h1>
-              <p className="mt-1.5 text-sm text-muted-foreground">
-                Assistente interno da {brand.companyName}. Entre para começar.
+              <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground sm:mt-1.5 sm:text-sm">
+                Tire dúvidas sobre processos, serviços e procedimentos da MSM.
               </p>
             </div>
-            <div className="rounded-lg border border-border bg-white p-6 shadow-[0_4px_24px_rgba(30,42,94,0.08)] sm:p-7">
+            <div className="mt-5 sm:mt-7">
               <LoginForm
                 passwordRequired={passwordRequired()}
                 misconfigured={accessMisconfigured()}
                 redirectTo={safeRedirect(params.de)}
               />
             </div>
-            <p className="mt-6 text-center text-xs text-muted-foreground lg:hidden">
-              Uso interno · {brand.companyName} · {brand.companyLocation}
-            </p>
           </div>
-        </main>
-      </div>
+          <p className="mt-5 text-center text-xs text-white/80 sm:mt-6">
+            Uso interno · {brand.companyName} · {brand.companyLocation}
+          </p>
+        </div>
+      </main>
     </div>
   );
 }

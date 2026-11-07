@@ -76,7 +76,7 @@ export function LoginForm({ passwordRequired, misconfigured, redirectTo }: Login
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-5" noValidate>
+    <form onSubmit={onSubmit} className="space-y-4 sm:space-y-5" noValidate>
       {misconfigured && (
         <div className="flex gap-2 rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
           <AlertTriangle className="mt-0.5 size-4 shrink-0" />
@@ -96,7 +96,7 @@ export function LoginForm({ passwordRequired, misconfigured, redirectTo }: Login
           ref={nameRef}
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Como você gostaria de ser chamado?"
+          placeholder="Ex.: Marcelo"
           autoComplete="name"
           maxLength={60}
           className="h-11 bg-white text-base sm:text-sm"
@@ -115,7 +115,7 @@ export function LoginForm({ passwordRequired, misconfigured, redirectTo }: Login
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Senha fornecida pela MSM"
+              placeholder="Digite a senha"
               autoComplete="current-password"
               className="h-11 bg-white pr-11 text-base sm:text-sm"
             />
