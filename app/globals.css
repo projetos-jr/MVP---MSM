@@ -23,6 +23,7 @@
   --color-navy: var(--brand-navy);
   --color-navy-light: var(--brand-navy-light);
   --color-navy-dark: var(--brand-navy-dark);
+  --color-navy-deep: var(--brand-navy-deep);
   --color-success: var(--brand-success);
 
   --color-sidebar-ring: var(--sidebar-ring);

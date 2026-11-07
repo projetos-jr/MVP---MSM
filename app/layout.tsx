@@ -27,6 +27,7 @@ export const metadata: Metadata = {
   },
   description: `Assistente interno com IA da ${brand.companyName}. ${brand.tagline}`,
   robots: { index: false, follow: false },
+  appleWebApp: { capable: true, title: brand.productName, statusBarStyle: "default" },
 };
 
 export const viewport: Viewport = {

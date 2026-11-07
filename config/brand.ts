@@ -4,8 +4,9 @@
  * Este é o ÚNICO lugar onde cores, nomes e textos de marca são definidos.
  * As cores viram variáveis CSS (`--brand-*`) injetadas no <head> pelo
  * layout raiz (app/layout.tsx) e são consumidas pelo app/globals.css.
- * Para trocar a identidade, altere apenas este arquivo (e o logo em
- * public/logo.svg).
+ * Para trocar a identidade, altere apenas este arquivo e as imagens em
+ * public/ (logo.png, logo-mark.png, login-bg.jpg) e app/ (icon.png,
+ * apple-icon.png).
  */
 
 export const brand = {
@@ -15,12 +16,27 @@ export const brand = {
   companyLocation: "Ribeirão Pires/SP",
   tagline: "Tire dúvidas sobre processos, serviços e procedimentos da MSM.",
 
+  /** Logo oficial completo (com "INDUSTRIAL ENGINEERING"). */
   logo: {
-    src: "/logo.svg",
+    src: "/logo.png",
     alt: "MSM Industrial Engineering",
-    width: 132,
-    height: 40,
+    width: 800,
+    height: 383,
   },
+
+  /** Só as letras "MSM": usado no avatar do assistente e nos ícones do app. */
+  logoMark: {
+    src: "/logo-mark.png",
+    alt: "MSM",
+    width: 400,
+    height: 145,
+  },
+
+  /**
+   * Foto de fundo da tela de entrada (peça fabricada pela MSM: skid de
+   * geradores de nitrogênio), com sobreposição azul como no site da MSM.
+   */
+  loginBackground: "/login-bg.jpg",
 
   colors: {
     /** Laranja principal: botões, destaques, barra superior */
@@ -31,6 +47,8 @@ export const brand = {
     navy: "#1E2A5E",
     navyLight: "#2C3A78",
     navyDark: "#151E45",
+    /** Azul bem escuro usado nas sobreposições de foto do site da MSM. */
+    navyDeep: "#041E42",
     /** Fundo claro e texto */
     background: "#F7F7F7",
     surface: "#FFFFFF",
@@ -66,6 +84,7 @@ export function brandCssVariables(): string {
     "--brand-navy": c.navy,
     "--brand-navy-light": c.navyLight,
     "--brand-navy-dark": c.navyDark,
+    "--brand-navy-deep": c.navyDeep,
     "--brand-background": c.background,
     "--brand-surface": c.surface,
     "--brand-text": c.text,

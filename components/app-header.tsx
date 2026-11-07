@@ -55,9 +55,9 @@ export function AppHeader({ userName }: { userName: string }) {
     <header className="shrink-0 bg-white">
       <BrandStripe />
       <div className="flex h-14 items-center gap-3 border-b border-border px-3 sm:h-16 sm:px-5">
-        <Link href="/" className="flex min-w-0 items-center gap-3" aria-label={brand.productName}>
-          <Logo className="h-8 sm:h-9" />
-          <span aria-hidden className="hidden h-7 w-px bg-border sm:block" />
+        <Link href="/" className="flex min-w-0 items-center gap-3 sm:gap-4" aria-label={brand.productName}>
+          <Logo className="h-9 sm:h-11" priority />
+          <span aria-hidden className="hidden h-8 w-px bg-border sm:block" />
           <span className="hidden font-heading text-[15px] font-bold tracking-wide text-navy uppercase sm:block">
             {brand.productName}
           </span>

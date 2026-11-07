@@ -43,7 +43,8 @@ plano gratuito da Vercel. Sem banco de dados e sem serviço de embeddings.
 - **Histórico no navegador** (`localStorage`) e avaliação 👍/👎 em cada resposta.
 - **Página “Base de conhecimento”** (`/documentos`): arquivos da pasta com tipo, data, status
   (lido, erro, não suportado), botão **Atualizar agora** e **Abrir pasta no Drive**.
-- **Responsivo:** funciona bem no celular (o pessoal da fábrica pode usar no próprio aparelho).
+- **Responsivo e instalável:** funciona bem no celular e pode ser adicionado à tela inicial como um
+  aplicativo (o pessoal da fábrica pode usar no próprio aparelho).
 - **Modo de teste:** sem `DRIVE_FOLDER_ID`, lê os arquivos de `seed-docs/`; sem `GEMINI_API_KEY`,
   mostra os trechos mais relevantes dos documentos (sem IA), deixando isso claro na tela.
 
@@ -234,7 +235,13 @@ Dica: teste o roteiro uma vez antes da reunião para “aquecer” o cache e con
 
 - **Cores, nome do produto, textos e sugestões de perguntas:** `config/brand.ts` (único arquivo de marca;
   as cores viram variáveis CSS `--brand-*`).
-- **Logo:** substitua `public/logo.svg` pelo logo oficial (mesmo nome). O ícone da aba é `app/icon.svg`.
+- **Logo:** `public/logo.png` (logo completo) e `public/logo-mark.png` (só as letras “MSM”, usado no
+  avatar do assistente). Os ícones do app ficam em `app/icon.png`, `app/apple-icon.png` e `public/icons/`.
+- **Foto de fundo da tela de entrada:** `public/login-bg.jpg` (skid de geradores de nitrogênio, do site da
+  MSM), com sobreposição em degradê azul. Para trocar, substitua o arquivo ou mude `loginBackground` em
+  `config/brand.ts`.
+- **Usar como aplicativo no celular:** abra o site no navegador do celular e escolha **Adicionar à tela
+  inicial** (Safari: botão Compartilhar; Chrome: menu ⋮). Ele abre em tela cheia, com o ícone da MSM.
 - **Prompt de sistema e regras:** `lib/prompt.ts`.
 
 ### Documentos de exemplo
