@@ -58,6 +58,13 @@ export const env = {
   get geminiThinkingLevel() {
     return (str("GEMINI_THINKING_LEVEL") || "low").toLowerCase();
   },
+  /**
+   * Prazo para o modelo começar a responder. Se estourar, tenta o modelo
+   * reserva (e, se ele também demorar, mostra uma mensagem de erro clara).
+   */
+  get geminiFirstTokenSeconds() {
+    return int("GEMINI_FIRST_TOKEN_SECONDS", 15);
+  },
   /** (Avançado) Endereço alternativo da API do Gemini, ex.: um proxy. */
   get geminiBaseUrl() {
     return str("GEMINI_BASE_URL");

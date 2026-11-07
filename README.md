@@ -136,7 +136,8 @@ Copie `.env.example` para `.env.local` e preencha. Todas estão documentadas no 
 | `GEMINI_API_KEY` | Sim, para a IA | Chave do Google AI Studio. Sem ela, o chat fica no modo de teste sem IA. |
 | `GEMINI_MODEL` | Não | Modelo principal. Padrão: `gemini-3.8-flash`. |
 | `GEMINI_FALLBACK_MODEL` | Não | Modelo reserva em caso de limite (429). Padrão: `gemini-3.5-flash-lite`. `none` desativa. |
-| `GEMINI_THINKING_LEVEL` | Não | Raciocínio dos modelos Gemini 3+: `minimal`, `low` (padrão), `medium`, `high` ou `default`. |
+| `GEMINI_THINKING_LEVEL` | Não | Raciocínio dos modelos Gemini 3+: `low` (padrão), `medium`, `high` ou `default`. |
+| `GEMINI_FIRST_TOKEN_SECONDS` | Não | Prazo para o modelo começar a responder antes de tentar o reserva. Padrão: `15`. |
 | `DRIVE_FOLDER_ID` | Sim, para o Drive | ID ou link da pasta. **Vazio = modo de teste lendo `seed-docs/`.** |
 | `GOOGLE_SERVICE_ACCOUNT_EMAIL` | Com o Drive | E-mail da conta de serviço. |
 | `GOOGLE_PRIVATE_KEY` | Com o Drive | Chave privada da conta de serviço (`private_key` do JSON). |
@@ -256,6 +257,8 @@ oferece?” e “Em quais setores a MSM atua?”.
 
 | Sintoma | Causa provável e solução |
 | --- | --- |
+| Fica “Consultando os documentos…” e depois dá erro | Abra `/api/diagnostico` (logado): mostra se cada modelo respondeu e em quanto tempo. Se o principal estiver lento, troque `GEMINI_MODEL` (ex.: `gemini-3.6-flash`) na Vercel e faça Redeploy. Os tempos também aparecem nos logs da Vercel (**Logs**). |
+| “A IA demorou demais para responder” | Os dois modelos passaram do prazo. Tente de novo; se repetir, veja `/api/diagnostico`. |
 | “Limite de uso gratuito da IA” | Cota por minuto/dia do plano gratuito. Aguarde 1 minuto. Veja os limites no painel do AI Studio. |
 | “Chave da IA inválida” | `GEMINI_API_KEY` errada ou revogada. Gere outra no AI Studio. |
 | “Pasta não encontrada” / “Sem permissão” | Pasta não compartilhada com o e-mail da conta de serviço, ou `DRIVE_FOLDER_ID` errado. |

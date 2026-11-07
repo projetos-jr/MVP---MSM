@@ -229,6 +229,8 @@ export function ChatApp({ userName }: { userName: string }) {
           case "done":
             finished = true;
             break;
+          case "ping":
+            break;
         }
       };
 

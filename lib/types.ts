@@ -42,6 +42,7 @@ export type ChatErrorCode =
   | "rate_limit"
   | "auth"
   | "unavailable"
+  | "timeout"
   | "blocked"
   | "knowledge"
   | "bad_request"
@@ -50,6 +51,7 @@ export type ChatErrorCode =
 /** Eventos enviados pelo /api/chat, um JSON por linha (NDJSON). */
 export type ChatStreamEvent =
   | { type: "meta"; offline: boolean; documents: number }
+  | { type: "ping" }
   | { type: "text"; text: string }
   | { type: "sources"; sources: Source[] }
   | { type: "error"; code: ChatErrorCode; message: string }
