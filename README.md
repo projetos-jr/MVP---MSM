@@ -304,7 +304,7 @@ documentos. Ao trocar os documentos, atualize as sugestões.
 ## Reaproveitar para outras empresas
 
 Este projeto é a base dos próximos MVPs de chatbot da UFABC Jr. O guia
-[`docs/GUIA-BASE-CHATBOT.md`](docs/GUIA-BASE-CHATBOT.md) explica como copiar o código (tag `base-chatbot-v1`),
+[`docs/GUIA-BASE-CHATBOT.md`](docs/GUIA-BASE-CHATBOT.md) explica como copiar o código (commit `d30904e`),
 trocar a marca e os documentos, e traz o prompt pronto para o Claude Code e as lições aprendidas.
 
 Scripts de apoio:

@@ -4,7 +4,7 @@ Este guia descreve o MVP do **Assistente MSM**, feito pela UFABC Jr para a MSM C
 o mesmo chatbot para **outra empresa**, com a identidade visual e os documentos dela.
 
 **Estratégia:** não reconstruir do zero. O novo projeto **copia o código deste repositório**, numa versão
-marcada (tag `base-chatbot-v1`), e troca só a marca e os documentos. Assim ele já nasce com todas as correções
+fixa (commit `d30904e`, a versão apresentada à MSM), e troca só a marca e os documentos. Assim ele já nasce com todas as correções
 descobertas no projeto da MSM (seção 7).
 
 ---
@@ -55,8 +55,8 @@ com a identidade visual e os documentos da nova empresa. A apresentação é <DA
 O guia anexo (GUIA-BASE-CHATBOT.md) explica o produto, a arquitetura, o que trocar e as lições
 aprendidas. Leia o guia inteiro antes de começar e siga-o.
 
-1. Copie o código-base: a tag base-chatbot-v1 do repositório projetos-jr/MVP---MSM (se não tiver
-   acesso, adicione esse repositório à sessão). Copie todos os arquivos para este repositório,
+1. Copie o código-base: o commit d30904efb82a15a36d85c036cd1b52e47ab38141 do repositório
+   projetos-jr/MVP---MSM (se não tiver acesso, adicione esse repositório à sessão). Copie todos os arquivos para este repositório,
    exceto .git, node_modules e .next (comandos na seção 5.2 do guia).
 2. Colete a identidade visual no site oficial (seção 5.4 do guia): logo em alta resolução,
    cores, fontes, a cor de sobreposição das fotos e uma foto de produto/serviço real para a tela
@@ -188,10 +188,15 @@ Coluna "Trocar?": **Sim** = muda para cada empresa; **Talvez** = só se a empres
 
 ### 5.2 Copiar o código-base
 
-Na raiz do repositório novo (vazio):
+Na raiz do repositório novo (vazio). O commit `d30904e` é a versão-base: tem o app exatamente como foi
+apresentado à MSM, mais este guia e os scripts. Se ele não existir mais, use a branch padrão do repositório.
 
 ```bash
-git clone --depth 1 --branch base-chatbot-v1 https://github.com/projetos-jr/MVP---MSM.git /tmp/base-chatbot
+git clone https://github.com/projetos-jr/MVP---MSM.git /tmp/base-chatbot
+```
+
+```bash
+git -C /tmp/base-chatbot checkout d30904efb82a15a36d85c036cd1b52e47ab38141
 ```
 
 ```bash
