@@ -301,6 +301,18 @@ documentos. Ao trocar os documentos, atualize as sugestões.
   relatórios (perguntas mais feitas, respostas mal avaliadas, lacunas na documentação).
 - **Modelo de IA:** plano gratuito do Gemini, com limites de uso e termos de dados do plano gratuito.
 
+## Reaproveitar para outras empresas
+
+Este projeto é a base dos próximos MVPs de chatbot da UFABC Jr. O guia
+[`docs/GUIA-BASE-CHATBOT.md`](docs/GUIA-BASE-CHATBOT.md) explica como copiar o código (tag `base-chatbot-v1`),
+trocar a marca e os documentos, e traz o prompt pronto para o Claude Code e as lições aprendidas.
+
+Scripts de apoio:
+
+- `scripts/marca/gerar-imagens.py`: gera logo, símbolo, ícones e foto de fundo a partir do logo da empresa.
+- `scripts/teste/gemini-simulado.mjs`: Gemini simulado para testar sem chave e sem gastar cota.
+- `scripts/teste/e2e.cjs`: teste de ponta a ponta no navegador (desktop e celulares), com capturas de tela.
+
 ## Estrutura do projeto
 
 ```
@@ -324,6 +336,8 @@ lib/
   auth.ts                     # senha única e cookie de sessão assinado
 middleware.ts                 # protege as páginas e APIs
 seed-docs/                    # documentos de exemplo
+docs/GUIA-BASE-CHATBOT.md     # guia para replicar o chatbot em outras empresas
+scripts/                      # gerador de imagens de marca e testes automatizados
 ```
 
 Tecnologias: Next.js 15 (App Router), TypeScript, Tailwind CSS 4, shadcn/ui, `@google/genai`,
